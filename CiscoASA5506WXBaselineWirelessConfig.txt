@@ -1,0 +1,122 @@
+Cisco ASA 5506W-X Baseline Wireless Config
+Requires: AAA to permit SSH, ASDM Access via LAN and Wireless
+I recently received a Cisco ASA 5506W-X for a Vulnerability Assessment
+
+Step 1: After you've configured the Chassis, Connect via Wireless, ssh or https to 192.168.10.1, get to enable prompt
+
+Step 2: Copy and Paste the pieces of config you like seen below, CTRL^Z, write
+
+Out of the Box with 9.7(1) use the LAN with DHCP to Surf the Internet: No Config Required!
+
+Reference Article: Blog Post: Config Sourcefire on CLI to enable Control Panel Reference Article: Cisco ASA 5506W-X FIREPOWER Example startup-config
+Wireless#sh conf
+!
+! Last configuration change at 00:52:24 UTC Mon Mar 1 1993
+version 15.3
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname WirelessIf
+!
+!
+logging rate-limit console 9
+no logging console
+!
+no aaa new-model
+no ip source-route
+no ip cef
+!
+
+dot11 syslog
+!
+dot11 ssid Wireless
+   authentication open
+   authentication key-management wpa version 2
+   guest-mode
+!
+dot11 ssid Wireless
+   authentication open
+   authentication key-management wpa version 2
+   guest-mode
+!
+!
+dot11 network-map
+!
+no ipv6 cef
+!
+!
+bridge irb
+!
+!
+!
+interface Dot11Radio0
+ no ip address
+ !
+ encryption mode ciphers aes-ccm
+ !
+ ssid Wireless
+ !
+ antenna gain 0
+ speed  basic-1.0 basic-2.0 basic-5.5 basic-11.0 basic-6.0 basic-9.0 basic-12.0 basic-18.0 basic-24.0 basic-36.0 basic-48.0 basic-54.0 m0. m1. m2. m3. m4. m5. m6. m7. m8. m9. m10. m11. m12. m13. m14. m15.
+ packet retries 64 drop-packet
+ station-role root
+ bridge-group 1
+ bridge-group 1 subscriber-loop-control
+ bridge-group 1 spanning-disabled
+ bridge-group 1 block-unknown-source
+ no bridge-group 1 source-learning
+ no bridge-group 1 unicast-flooding
+!
+interface Dot11Radio1
+ no ip address
+ !
+ encryption mode ciphers aes-ccm
+ !
+ ssid Wireless
+ !
+ antenna gain 0
+ peakdetect
+ no dfs band block
+ speed  basic-6.0 basic-9.0 basic-12.0 basic-18.0 basic-24.0 basic-36.0 basic-48.0 basic-54.0 m0. m1. m2. m3. m4. m5. m6. m7. m8. m9. m10. m11. m12. m13. m14. m15.
+ packet retries 64 drop-packet
+ channel dfs
+ station-role root
+ bridge-group 1
+ bridge-group 1 subscriber-loop-control
+ bridge-group 1 spanning-disabled
+ bridge-group 1 block-unknown-source
+ no bridge-group 1 source-learning
+ no bridge-group 1 unicast-flooding
+!
+interface GigabitEthernet0
+ no ip address
+ bridge-group 1
+ bridge-group 1 spanning-disabled
+ no bridge-group 1 source-learning
+!
+interface BVI1
+ mac-address 0042.5ad0.0578
+ ip address dhcp client-id GigabitEthernet0
+ ipv6 address dhcp
+ ipv6 address autoconfig
+ ipv6 enable
+!
+ip forward-protocol nd
+ip http server
+ip http secure-server
+ip http help-path http://www.cisco.com/warp/public/779/smbiz/prodconfig/help/eag
+!
+!
+snmp-server community SNMP RO
+bridge 1 route ip
+!
+!
+!
+line con 0
+line vty 0 4
+ login local
+ transport input all
+!
+end
