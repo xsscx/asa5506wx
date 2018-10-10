@@ -1,0 +1,24 @@
+!Cisco ASA 5506W-X Example Config
+!
+!There are 2 examples below, via Class or ACL 
+!
+!Example with match any ip and redirect to sfr
+!
+class-map sfr
+ match any
+policy-map global_policy
+ class sfr
+ sfr fail-open
+service-policy global_policy global
+!
+!Example with match any ip and redirect to sfr via ACL
+!
+access-list sfr-acl extended permit ip any any
+class-map sfr
+ match access-list sfr-acl
+policy-map global_policy
+ class sfr
+ sfr fail-open
+service-policy global_policy global
+!
+!end
